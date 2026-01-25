@@ -1,24 +1,30 @@
 {
-  "name": "ln-payment",
-  "version": "1.0.0",
-  "description": "Full-stack app that enables Lightning Network invoice payments",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/manumonti/ln-payment.git"
-  },
-  "author": "Manuel Montenegro",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/manumonti/ln-payment/issues"
-  },
-  "homepage": "https://github.com/manumonti/ln-payment#readme",
-  "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "6.0.2",
-    "prettier": "3.8.1",
-    "prettier-plugin-tailwindcss": "0.7.2"
-  }
+    "name": "ln-payment",
+    "version": "1.0.0",
+    "description": "Full-stack app that enables Lightning Network invoice payments",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "prepare": "husky"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/manumonti/ln-payment.git"
+    },
+    "author": "Manuel Montenegro",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/manumonti/ln-payment/issues"
+    },
+    "homepage": "https://github.com/manumonti/ln-payment#readme",
+    "lint-staged": {
+        "**/*": "prettier --write --ignore-unknown"
+    },
+    "devDependencies": {
+        "@trivago/prettier-plugin-sort-imports": "6.0.2",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
+        "prettier": "3.8.1",
+        "prettier-plugin-tailwindcss": "0.7.2"
+    }
 }
