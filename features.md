@@ -10,3 +10,5 @@
 - Node.js
 - Express.js
 - TypeScript
+- Docker-compose file to run frontend, backend and database
+  
