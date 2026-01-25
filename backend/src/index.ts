@@ -1,16 +1,7 @@
-import express, { NextFunction, Request, Response } from "express";
+import app from "./server";
 
-const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-app.use(express.json());
-app.get("/", (req: Request, res: Response) => {
-    res.send({ message: "Hello World" });
-});
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    res.status(500).send("Something's wrong");
-});
-
-app.listen(port, () => {
-    console.log(`Server is running on ports ${port}`);
+const server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
