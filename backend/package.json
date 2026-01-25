@@ -2,7 +2,7 @@
     "name": "ln-payment-backend",
     "version": "1.0.0",
     "description": "Backend side of Lightning Network invoice payments app",
-    "main": "index.js",
+    "main": "index.ts",
     "nodemonConfig": {
         "watch": [
             "src"
@@ -36,7 +36,9 @@
         "typescript": "^5.9.3"
     },
     "dependencies": {
+        "@radar/lnrpc": "^0.11.1-beta.1",
         "express": "^5.2.1",
-        "morgan": "^1.10.1"
+        "morgan": "^1.10.1",
+        "uuid": "^13.0.0"
     }
 }
