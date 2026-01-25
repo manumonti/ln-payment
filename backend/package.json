@@ -1,0 +1,40 @@
+{
+    "name": "ln-payment-backend",
+    "version": "1.0.0",
+    "description": "Backend side of Lightning Network invoice payments app",
+    "main": "index.js",
+    "nodemonConfig": {
+        "watch": [
+            "src"
+        ],
+        "ext": "ts",
+        "ignore": [
+            "*.test.ts"
+        ],
+        "execMap": {
+            "ts": "ts-node"
+        }
+    },
+    "scripts": {
+        "dev": "nodemon src/index.ts",
+        "start": "node dist/index.js",
+        "lint": "eslint src --ext .ts"
+    },
+    "author": "Manuel Montenegro",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@typescript-eslint/eslint-plugin": "^8.53.1",
+        "@typescript-eslint/parser": "^8.53.1",
+        "eslint": "^9.39.2",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.5",
+        "nodemon": "^3.1.11",
+        "prettier": "^3.8.1",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "express": "^5.2.1"
+    }
+}
