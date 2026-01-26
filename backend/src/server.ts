@@ -12,15 +12,6 @@ app.use(morgan("common"));
 app.use(express.json());
 
 /**
- * simple middleware to grab the token from the header and add it to the
- * request's body
- */
-app.use((req, res, next) => {
-    req.body.token = req.header("X-Token");
-    next();
-});
-
-/**
  * ExpressJS will hang if an async route handler doesn't catch errors and
  * return a response. To avoid wrapping every handler in try/catch, just call
  * this func on the handler. It will catch any async errors and return
@@ -47,6 +38,6 @@ export const catchAsyncErrors = (
 
 app.post("/api/connect", catchAsyncErrors(routes.connect));
 app.post("/api/invoice", catchAsyncErrors(routes.createInvoice));
-// app.get("/api/invoice/:payment_hash", catchAsyncErrors(routes.invoiceStatus));
+app.get("/api/invoice/:payment_hash", catchAsyncErrors(routes.invoiceStatus));
 
 export default app;

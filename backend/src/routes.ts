@@ -14,9 +14,12 @@ export const connect = async (req: Request, res: Response) => {
  * POST /api/invoice
  */
 export const createInvoice = async (req: Request, res: Response) => {
-    const { token, amount, memo } = req.body;
+    const token = req.header("X-Token");
+    if (!token) {
+        throw new Error("Missing token");
+    }
+    const { amount, memo } = req.body;
     const rpc = nodeManager.getRpc(token);
-    console.log(rpc);
     const inv = await rpc.addInvoice({ value: amount.toString() });
     res.send({
         payreq: inv.paymentRequest,
@@ -27,15 +30,24 @@ export const createInvoice = async (req: Request, res: Response) => {
     // TODO: save to database
 };
 
-// /**
-//  * GET /api/invoice/:payment_hash
-//  */
-// export const invoiceStatus = async (req: Request, res: Response) => {
-//     const { token, payment_hash } = req.params;
-//     //     const rpc = nodeManager.getRpc(token);
-//     //     const inv = await rpc.lookupInvoice({
-//     //         rHash: Buffer.from(payment_hash, "base64"),
-//     //     });
-//     //     res.send(inv);
-//     //     // TODO: save to database
-// };
+/**
+ * GET /api/invoice/:payment_hash
+ */
+export const invoiceStatus = async (req: Request, res: Response) => {
+    const token = req.header("X-Token");
+    if (!token) throw new Error("Missing token");
+
+    const { payment_hash } = req.params;
+    const rHash = Buffer.from(payment_hash as string, "base64");
+
+    const rpc = nodeManager.getRpc(token);
+    const inv = await rpc.lookupInvoice({
+        rHash,
+    });
+    res.send({
+        settled: inv.settled || false,
+        creationDate: inv.creationDate,
+        settleDate: inv.settleDate || null,
+    });
+    // TODO: read data from database
+};
