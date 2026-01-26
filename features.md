@@ -10,5 +10,7 @@
 - Node.js
 - Express.js
 - TypeScript
+- Unit tests with Jest library
+
 - Docker-compose file to run frontend, backend and database
   

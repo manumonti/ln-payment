@@ -7,8 +7,9 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": ".",
+        "types": ["jest"]
     },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "src/tests/**/*"]
+    "include": ["src/**/*", "tests/**/*.test.ts"],
+    "exclude": ["node_modules", "dist"]
 }
