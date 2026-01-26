@@ -39,5 +39,6 @@ export const catchAsyncErrors = (
 app.post("/api/connect", catchAsyncErrors(routes.connect));
 app.post("/api/invoice", catchAsyncErrors(routes.createInvoice));
 app.get("/api/invoice/:payment_hash", catchAsyncErrors(routes.invoiceStatus));
+app.post("/api/payment", catchAsyncErrors(routes.payInvoice));
 
 export default app;
