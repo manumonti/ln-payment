@@ -63,6 +63,7 @@ export const payInvoice = async (req: Request, res: Response) => {
 
     const call = rpc.sendPaymentV2({ paymentRequest });
 
+    // TODO: save to database the status of the payment
     call.on("data", (response) => {
         console.log("response", response);
     });
@@ -73,5 +74,30 @@ export const payInvoice = async (req: Request, res: Response) => {
         console.log("Server has closed the stream");
     });
 
-    res.send({ status: "pending" });
+    // TODO: what to return here?
+    res.send({});
+};
+
+/**
+ * GET /api/payment/:payment_hash
+ */
+export const paymentStatus = async (req: Request, res: Response) => {
+    // TODO: get payment status (from database and node)
+    res.send({});
+};
+
+/**
+ * GET /api/transactions
+ */
+export const transactions = async (req: Request, res: Response) => {
+    // TODO: List all transactions from database
+    res.send({});
+};
+
+/**
+ * GET /api/balance
+ */
+export const balance = async (req: Request, res: Response) => {
+    // TODO: Get total balance from recorded transactions (invoices received minus payments sent)
+    res.send({});
 };

@@ -40,5 +40,8 @@ app.post("/api/connect", catchAsyncErrors(routes.connect));
 app.post("/api/invoice", catchAsyncErrors(routes.createInvoice));
 app.get("/api/invoice/:payment_hash", catchAsyncErrors(routes.invoiceStatus));
 app.post("/api/payment", catchAsyncErrors(routes.payInvoice));
+app.get("/api/payment/:payment_hash", catchAsyncErrors(routes.paymentStatus));
+app.get("/api/transactions", catchAsyncErrors(routes.transactions));
+app.get("/api/balance", catchAsyncErrors(routes.balance));
 
 export default app;
