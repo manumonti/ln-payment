@@ -59,9 +59,9 @@ export const payInvoice = async (req: Request, res: Response) => {
     if (!token) throw new Error("Missing token");
 
     const { paymentRequest } = req.body;
-    const rpc = nodeManager.getRpc(token);
+    const rpc = nodeManager.getRouterRpc(token);
 
-    const call = rpc.sendPayment({ paymentRequest });
+    const call = rpc.sendPaymentV2({ paymentRequest });
 
     call.on("data", (response) => {
         console.log("response", response);
@@ -72,8 +72,6 @@ export const payInvoice = async (req: Request, res: Response) => {
     call.on("end", () => {
         console.log("Server has closed the stream");
     });
-
-    call.write({ paymentRequest });
 
     res.send({ status: "pending" });
 };
