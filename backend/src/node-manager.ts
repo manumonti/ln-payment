@@ -1,4 +1,4 @@
-import createLnRpc, { LnRpc } from "@radar/lnrpc";
+import createLnRpc, { createRouterRpc, LnRpc, RouterRpc } from "@radar/lnrpc";
 import { EventEmitter } from "events";
 import { v4 as uuidv4 } from "uuid";
 
@@ -14,18 +14,34 @@ export interface LndNode {
     pubkey: string;
 }
 
+interface NodeRpcConnections {
+    rpc: LnRpc;
+    routerRpc: RouterRpc;
+}
+
 class NodeManager extends EventEmitter {
     /**
      * a mapping of token to gRPC connection. This is an optimization to
      * avoid calling `createLnRpc` on every request. Instead, the object is kept
      * in memory for the lifetime of the server.
      */
-    private _lndNodes: Record<string, LnRpc> = {};
+    private _lndNodes: Record<string, NodeRpcConnections> = {};
 
     /**
      * Retrieves the in-memory connection to an LND node
      */
     getRpc(token: string): LnRpc {
+        return this._getNode(token).rpc;
+    }
+
+    /**
+     * Retrieves the in-memory router connection to an LND node
+     */
+    getRouterRpc(token: string): RouterRpc {
+        return this._getNode(token).routerRpc;
+    }
+
+    private _getNode(token: string): NodeRpcConnections {
         if (!this._lndNodes[token]) {
             throw new Error("Not Authorized. You must login first!");
         }
@@ -46,8 +62,15 @@ class NodeManager extends EventEmitter {
         const token = prevToken || uuidv4().replace(/-/g, "");
 
         try {
-            // add the connection to the cache
+            // add the ln rpc connection to the cache
             const rpc = await createLnRpc({
+                server: host,
+                cert: Buffer.from(cert, "hex").toString("utf-8"), // utf8 encoded certificate
+                macaroon, // hex encoded macaroon
+            });
+
+            // add the router rpc connection to the cache
+            const routerRpc = await createRouterRpc({
                 server: host,
                 cert: Buffer.from(cert, "hex").toString("utf-8"), // utf8 encoded certificate
                 macaroon, // hex encoded macaroon
@@ -76,7 +99,10 @@ class NodeManager extends EventEmitter {
             this.listenForPayments(rpc, pubkey);
 
             // store this rpc connection in the in-memory list
-            this._lndNodes[token] = rpc;
+            this._lndNodes[token] = {
+                rpc,
+                routerRpc,
+            };
 
             // return this node's token for future requests
             return { token, pubkey };
