@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import nodeManager from "./node-manager";
-import { SendRequest } from "@radar/lnrpc";
 
 /**
  * POST /api/connect

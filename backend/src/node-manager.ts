@@ -1,6 +1,7 @@
 import createLnRpc, { createRouterRpc, LnRpc, RouterRpc } from "@radar/lnrpc";
 import { EventEmitter } from "events";
 import { v4 as uuidv4 } from "uuid";
+import database from "./database";
 
 export const NodeEvents = {
     invoicePaid: "invoice-paid",
@@ -103,6 +104,12 @@ class NodeManager extends EventEmitter {
                 rpc,
                 routerRpc,
             };
+
+            // save node to database
+            await database.query(
+                `INSERT INTO nodes (token, host, cert, macaroon, pubkey) VALUES ($1, $2, $3, $4, $5)`,
+                [token, host, cert, macaroon, pubkey],
+            );
 
             // return this node's token for future requests
             return { token, pubkey };

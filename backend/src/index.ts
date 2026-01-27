@@ -1,6 +1,6 @@
-import app from "./server";
-import database from "./database";
 import dotenv from "dotenv";
+import database from "./database";
+import app from "./server";
 dotenv.config({ path: "../.env" });
 
 const port = process.env.SERVER_PORT || 3000;
