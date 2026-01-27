@@ -63,18 +63,10 @@ export const invoiceStatus = async (req: Request, res: Response) => {
     if (!token) throw new Error("Missing token");
 
     const { payment_hash } = req.params;
-    const rHash = Buffer.from(payment_hash as string, "base64");
 
-    const rpc = nodeManager.getRpc(token);
-    const inv = await rpc.lookupInvoice({
-        rHash,
-    });
-    res.send({
-        settled: inv.settled || false,
-        creationDate: inv.creationDate,
-        settleDate: inv.settleDate || null,
-    });
-    // TODO: read data from database
+    // DB is synced; skip LND lookup.
+    const inv = await database.getInvoice(payment_hash as string);
+    res.send(inv);
 };
 
 /**

@@ -195,6 +195,29 @@ class Database {
             ],
         );
     }
+
+    async getInvoice(hash: string): Promise<{
+        hash: string;
+        payreq: string;
+        amount: number;
+        memo: string;
+        settled: boolean;
+        creationDate: string | undefined;
+        settleDate: string | undefined;
+        expiry: string | undefined;
+    }> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        const result = await this.query(
+            "SELECT * FROM invoices WHERE hash = $1",
+            [hash],
+        );
+
+        return result.rows[0];
+    }
 }
 
 export default new Database();
