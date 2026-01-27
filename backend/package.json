@@ -27,6 +27,7 @@
         "@types/express": "^5.0.6",
         "@types/jest": "^30.0.0",
         "@types/morgan": "^1.9.10",
+        "@types/pg": "^8.16.0",
         "@types/uuid": "^10.0.0",
         "@typescript-eslint/eslint-plugin": "^8.53.1",
         "@typescript-eslint/parser": "^8.53.1",
@@ -47,6 +48,7 @@
         "dotenv": "^17.2.3",
         "express": "^5.2.1",
         "morgan": "^1.10.1",
+        "pg": "^8.17.2",
         "uuid": "^9.0.1"
     }
 }

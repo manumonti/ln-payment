@@ -11,6 +11,9 @@
 - Express.js
 - TypeScript
 - Unit tests with Jest library
+- Backend server running on container
+- Postgres database + pgAdmin running on container
 
-- Docker-compose file to run frontend, backend and database
-  
+## Others
+
+- .env file with configuration variables
