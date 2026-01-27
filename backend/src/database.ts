@@ -102,6 +102,22 @@ class Database {
             this.pool = null;
         }
     }
+
+    async saveNode(
+        token: string,
+        host: string,
+        cert: string,
+        macaroon: string,
+        pubkey: string,
+    ): Promise<void> {
+        const now = new Date();
+        // Remove previous entries with the same host
+        await this.query("DELETE FROM nodes WHERE host = $1", [host]);
+        await this.query(
+            `INSERT INTO nodes (token, host, cert, macaroon, pubkey, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [token, host, cert, macaroon, pubkey, now, now],
+        );
+    }
 }
 
 export default new Database();

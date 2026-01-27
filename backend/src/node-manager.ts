@@ -105,11 +105,8 @@ class NodeManager extends EventEmitter {
                 routerRpc,
             };
 
-            // save node to database
-            await database.query(
-                `INSERT INTO nodes (token, host, cert, macaroon, pubkey) VALUES ($1, $2, $3, $4, $5)`,
-                [token, host, cert, macaroon, pubkey],
-            );
+            // save node data to database
+            database.saveNode(token, host, cert, macaroon, pubkey);
 
             // return this node's token for future requests
             return { token, pubkey };
