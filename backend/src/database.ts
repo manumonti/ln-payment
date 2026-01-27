@@ -68,7 +68,8 @@ class Database {
                         memo TEXT,
                         settled BOOLEAN DEFAULT false,
                         creation_date TIMESTAMP,
-                        settle_date TIMESTAMP
+                        settle_date TIMESTAMP,
+                        expiry INT
                     );
                 `);
 
@@ -162,8 +163,9 @@ class Database {
         amount: number,
         memo: string,
         settled: boolean,
-        creationDate: string,
-        settleDate: string,
+        creationDate: string | undefined,
+        settleDate: string | undefined,
+        expiry: string | undefined,
     ): Promise<void> {
         if (!this.pool) {
             throw new Error(
@@ -177,9 +179,10 @@ class Database {
         const settleDateFormatted = settleDate
             ? new Date(Number(settleDate) * 1000)
             : null;
+        const expiryFormatted = expiry ? Number(expiry) : null;
 
         await this.query(
-            `INSERT INTO invoices (hash, payreq, amount, memo, settled, creation_date, settle_date) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            `INSERT INTO invoices (hash, payreq, amount, memo, settled, creation_date, settle_date, expiry) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
             [
                 hash,
                 payreq,
@@ -188,6 +191,7 @@ class Database {
                 settled,
                 creationDateFormatted,
                 settleDateFormatted,
+                expiryFormatted,
             ],
         );
     }

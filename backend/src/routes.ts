@@ -31,8 +31,6 @@ export const createInvoice = async (req: Request, res: Response) => {
     const hash = (inv.rHash as Buffer).toString("base64");
     const payreq = inv.paymentRequest;
     const settled = invLookedUp.settled || false;
-    const creationDate = invLookedUp.creationDate || "";
-    const settleDate = invLookedUp.settleDate || "";
 
     await database.saveInvoice(
         hash,
@@ -40,8 +38,9 @@ export const createInvoice = async (req: Request, res: Response) => {
         amount,
         memo,
         settled,
-        creationDate,
-        settleDate,
+        invLookedUp.creationDate,
+        invLookedUp.settleDate,
+        invLookedUp.expiry,
     );
 
     res.send({
@@ -50,8 +49,9 @@ export const createInvoice = async (req: Request, res: Response) => {
         amount,
         memo,
         settled,
-        creationDate,
-        settleDate,
+        creationDate: invLookedUp.creationDate,
+        settleDate: invLookedUp.settleDate,
+        expiry: invLookedUp.expiry,
     });
 };
 
