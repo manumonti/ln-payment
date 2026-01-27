@@ -1,4 +1,5 @@
 import { Pool, PoolClient } from "pg";
+import { LndNode } from "./node-manager";
 
 /**
  * Database connection pool for PostgreSQL
@@ -103,6 +104,25 @@ class Database {
         }
     }
 
+    async getNodes(): Promise<LndNode[]> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        const result = await this.query("SELECT * FROM nodes");
+
+        const nodes: LndNode[] = result.rows.map((row) => ({
+            token: row.token,
+            host: row.host,
+            cert: row.cert,
+            macaroon: row.macaroon,
+            pubkey: row.pubkey,
+        }));
+
+        return nodes;
+    }
+
     async saveNode(
         token: string,
         host: string,
@@ -110,6 +130,11 @@ class Database {
         macaroon: string,
         pubkey: string,
     ): Promise<void> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
         const now = new Date();
         // Remove previous entries with the same host
         await this.query("DELETE FROM nodes WHERE host = $1", [host]);

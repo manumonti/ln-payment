@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import database from "./database";
+import nodeManager from "./node-manager";
 import app from "./server";
 dotenv.config({ path: "../.env" });
 
@@ -15,6 +16,10 @@ async function startServer() {
 
         // Initialize database tables
         await database.initializeTables();
+
+        // Reconnect to LND nodes
+        const nodes = await database.getNodes();
+        await nodeManager.reconnectNodes(nodes);
 
         // Start the Express server
         const server = app.listen(port, () => {
