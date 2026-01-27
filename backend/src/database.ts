@@ -55,8 +55,20 @@ class Database {
                         cert TEXT NOT NULL,
                         macaroon TEXT NOT NULL,
                         pubkey VARCHAR(66) NOT NULL,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                `);
+
+            await client.query(`
+                    CREATE TABLE IF NOT EXISTS invoices (
+                        id SERIAL PRIMARY KEY,
+                        hash VARCHAR(255) UNIQUE NOT NULL,
+                        payreq TEXT NOT NULL,
+                        amount BIGINT NOT NULL,
+                        memo TEXT,
+                        settled BOOLEAN DEFAULT false,
+                        creation_date TIMESTAMP,
+                        settle_date TIMESTAMP
                     );
                 `);
 
@@ -139,8 +151,44 @@ class Database {
         // Remove previous entries with the same host
         await this.query("DELETE FROM nodes WHERE host = $1", [host]);
         await this.query(
-            `INSERT INTO nodes (token, host, cert, macaroon, pubkey, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [token, host, cert, macaroon, pubkey, now, now],
+            `INSERT INTO nodes (token, host, cert, macaroon, pubkey, created_at) VALUES ($1, $2, $3, $4, $5, $6)`,
+            [token, host, cert, macaroon, pubkey, now],
+        );
+    }
+
+    async saveInvoice(
+        hash: string,
+        payreq: string,
+        amount: number,
+        memo: string,
+        settled: boolean,
+        creationDate: string,
+        settleDate: string,
+    ): Promise<void> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+
+        const creationDateFormatted = creationDate
+            ? new Date(Number(creationDate) * 1000)
+            : null;
+        const settleDateFormatted = settleDate
+            ? new Date(Number(settleDate) * 1000)
+            : null;
+
+        await this.query(
+            `INSERT INTO invoices (hash, payreq, amount, memo, settled, creation_date, settle_date) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [
+                hash,
+                payreq,
+                amount,
+                memo,
+                settled,
+                creationDateFormatted,
+                settleDateFormatted,
+            ],
         );
     }
 }

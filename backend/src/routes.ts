@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import database from "./database";
 import nodeManager from "./node-manager";
 
 /**
@@ -18,14 +19,40 @@ export const createInvoice = async (req: Request, res: Response) => {
     if (!token) throw new Error("Missing token");
     const { amount, memo } = req.body;
     const rpc = nodeManager.getRpc(token);
-    const inv = await rpc.addInvoice({ value: amount.toString() });
-    res.send({
-        payreq: inv.paymentRequest,
-        hash: (inv.rHash as Buffer).toString("base64"),
+    const inv = await rpc.addInvoice({
+        value: amount.toString(),
+        memo: memo || "",
+    });
+
+    const invLookedUp = await rpc.lookupInvoice({
+        rHash: inv.rHash,
+    });
+
+    const hash = (inv.rHash as Buffer).toString("base64");
+    const payreq = inv.paymentRequest;
+    const settled = invLookedUp.settled || false;
+    const creationDate = invLookedUp.creationDate || "";
+    const settleDate = invLookedUp.settleDate || "";
+
+    await database.saveInvoice(
+        hash,
+        payreq,
         amount,
         memo,
+        settled,
+        creationDate,
+        settleDate,
+    );
+
+    res.send({
+        hash,
+        payreq,
+        amount,
+        memo,
+        settled,
+        creationDate,
+        settleDate,
     });
-    // TODO: save to database
 };
 
 /**
