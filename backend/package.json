@@ -44,6 +44,7 @@
     "dependencies": {
         "@radar/lnrpc": "^0.11.1-beta.1",
         "@types/supertest": "^6.0.3",
+        "dotenv": "^17.2.3",
         "express": "^5.2.1",
         "morgan": "^1.10.1",
         "uuid": "^9.0.1"
