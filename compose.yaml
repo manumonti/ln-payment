@@ -3,6 +3,15 @@ services:
     backend:
         container_name: backend
         build: ./backend
+        environment:
+            - SERVER_PORT=${SERVER_PORT}
+            - POSTGRES_HOST=${POSTGRES_HOST}
+            - POSTGRES_PORT=${POSTGRES_PORT}
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PW=${POSTGRES_PW}
+            - POSTGRES_DB=${POSTGRES_DB}
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
         ports:
             - "${SERVER_PORT}:3000"
         depends_on:

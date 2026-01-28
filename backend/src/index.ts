@@ -2,6 +2,9 @@ import dotenv from "dotenv";
 import database from "./database";
 import nodeManager, { NodeEvents } from "./node-manager";
 import app from "./server";
+
+// Load .env file only if it exists (for local development)
+// In Docker, environment variables are injected via docker-compose
 dotenv.config({ path: "../.env" });
 
 const port = process.env.SERVER_PORT || 3000;
@@ -12,7 +15,13 @@ const port = process.env.SERVER_PORT || 3000;
 async function startServer() {
     try {
         // Connect to the database
-        await database.connect();
+        await database.connect(
+            process.env.POSTGRES_HOST,
+            Number(process.env.POSTGRES_PORT),
+            process.env.POSTGRES_USER,
+            process.env.POSTGRES_PW,
+            process.env.POSTGRES_DB,
+        );
 
         // Initialize database tables
         await database.initializeTables();

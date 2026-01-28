@@ -10,14 +10,20 @@ class Database {
     /**
      * Initialize the database connection pool
      */
-    async connect(): Promise<void> {
+    async connect(
+        postgres_host: string | undefined,
+        postgres_port: number | undefined,
+        postgres_user: string | undefined,
+        postgres_pw: string | undefined,
+        postgres_db: string | undefined,
+    ): Promise<void> {
         try {
             this.pool = new Pool({
-                host: process.env.POSTGRES_HOST || "localhost",
-                port: parseInt(process.env.POSTGRES_PORT || "5432"),
-                user: process.env.POSTGRES_USER || "admin",
-                password: process.env.POSTGRES_PW || "admin",
-                database: process.env.POSTGRES_DB || "postgres",
+                host: postgres_host || "localhost",
+                port: postgres_port || 5432,
+                user: postgres_user || "admin",
+                password: postgres_pw || "admin",
+                database: postgres_db || "postgres",
             });
 
             // Test the connection
