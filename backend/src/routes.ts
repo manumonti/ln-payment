@@ -24,34 +24,38 @@ export const createInvoice = async (req: Request, res: Response) => {
         memo: memo || "",
     });
 
+    // look up the invoice to get the creation date and expiry
     const invLookedUp = await rpc.lookupInvoice({
         rHash: inv.rHash,
     });
 
-    const hash = (inv.rHash as Buffer).toString("base64");
-    const payreq = inv.paymentRequest;
-    const settled = invLookedUp.settled || false;
+    const rHash = (inv.rHash as Buffer).toString("hex");
+    const paymentRequest = inv.paymentRequest;
+    const settled = false;
+    const creationDate = invLookedUp.creationDate;
+    const settleDate = invLookedUp.settleDate;
+    const expiry = invLookedUp.expiry;
 
     await database.saveInvoice(
-        hash,
-        payreq,
+        rHash,
+        paymentRequest,
         amount,
         memo,
         settled,
-        invLookedUp.creationDate,
-        invLookedUp.settleDate,
-        invLookedUp.expiry,
+        creationDate,
+        settleDate,
+        expiry,
     );
 
     res.send({
-        hash,
-        payreq,
+        rHash,
+        paymentRequest,
         amount,
         memo,
         settled,
-        creationDate: invLookedUp.creationDate,
-        settleDate: invLookedUp.settleDate,
-        expiry: invLookedUp.expiry,
+        creationDate,
+        settleDate,
+        expiry,
     });
 };
 
@@ -64,9 +68,35 @@ export const invoiceStatus = async (req: Request, res: Response) => {
 
     const { payment_hash } = req.params;
 
-    // DB is synced; skip LND lookup.
-    const inv = await database.getInvoice(payment_hash as string);
-    res.send(inv);
+    // no need to get invoice from db since lookupInvoice returns all the data
+    const rpc = nodeManager.getRpc(token);
+    const inv = await rpc.lookupInvoice({
+        rHash: Buffer.from(payment_hash as string, "hex"),
+    });
+
+    if (!inv) {
+        res.status(404).send({ error: "No invoice found" });
+    }
+
+    const rHash = (inv.rHash as Buffer).toString("hex");
+    const paymentRequest = inv.paymentRequest;
+    const amount = inv.value;
+    const memo = inv.memo;
+    const settled = inv.settled || false;
+    const creationDate = inv.creationDate;
+    const settleDate = inv.settleDate || null;
+    const expiry = inv.expiry;
+
+    res.send({
+        rHash,
+        paymentRequest,
+        amount,
+        memo,
+        settled,
+        creationDate,
+        settleDate,
+        expiry,
+    });
 };
 
 /**
@@ -81,7 +111,7 @@ export const payInvoice = async (req: Request, res: Response) => {
 
     const call = rpc.sendPaymentV2({ paymentRequest });
 
-    // TODO: save to database the status of the payment
+    // TODO: save to the database
     call.on("data", (response) => {
         console.log("response", response);
     });

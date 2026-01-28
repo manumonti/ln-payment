@@ -63,7 +63,21 @@ class Database {
                     CREATE TABLE IF NOT EXISTS invoices (
                         id SERIAL PRIMARY KEY,
                         hash VARCHAR(255) UNIQUE NOT NULL,
-                        payreq TEXT NOT NULL,
+                        payment_request TEXT NOT NULL,
+                        amount BIGINT NOT NULL,
+                        memo TEXT,
+                        settled BOOLEAN DEFAULT false,
+                        creation_date TIMESTAMP,
+                        settle_date TIMESTAMP,
+                        expiry INT
+                    );
+                `);
+
+            await client.query(`
+                    CREATE TABLE IF NOT EXISTS payments (
+                        id SERIAL PRIMARY KEY,
+                        hash VARCHAR(255) UNIQUE NOT NULL,
+                        payment_request TEXT NOT NULL,
                         amount BIGINT NOT NULL,
                         memo TEXT,
                         settled BOOLEAN DEFAULT false,
@@ -182,7 +196,7 @@ class Database {
         const expiryFormatted = expiry ? Number(expiry) : null;
 
         await this.query(
-            `INSERT INTO invoices (hash, payreq, amount, memo, settled, creation_date, settle_date, expiry) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            `INSERT INTO invoices (hash, payment_request, amount, memo, settled, creation_date, settle_date, expiry) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
             [
                 hash,
                 payreq,
@@ -192,6 +206,39 @@ class Database {
                 creationDateFormatted,
                 settleDateFormatted,
                 expiryFormatted,
+            ],
+        );
+    }
+
+    async updateInvoice(
+        hash: string,
+        inv: {
+            hash: string;
+            payreq: string;
+            amount: number;
+            memo: string;
+            settled: boolean;
+            creationDate: string | undefined;
+            settleDate: string | undefined;
+            expiry: string | undefined;
+        },
+    ): Promise<void> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        await this.query(
+            `UPDATE invoices SET payment_request = $2, amount = $3, memo = $4, settled = $5, creation_date = $6, settle_date = $7, expiry = $8 WHERE hash = $1`,
+            [
+                hash,
+                inv.payreq,
+                inv.amount,
+                inv.memo,
+                inv.settled,
+                inv.creationDate,
+                inv.settleDate,
+                inv.expiry,
             ],
         );
     }
