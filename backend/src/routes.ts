@@ -154,6 +154,7 @@ export const payInvoice = async (req: Request, res: Response) => {
     });
 
     call.on("data", (response) => {
+        // Update payment on DB
         database.updatePayment({
             ...payment,
             paymentPreimage: response.paymentPreimage,
