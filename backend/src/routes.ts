@@ -106,24 +106,64 @@ export const payInvoice = async (req: Request, res: Response) => {
     const token = req.header("X-Token");
     if (!token) throw new Error("Missing token");
 
-    const { paymentRequest } = req.body;
-    const rpc = nodeManager.getRouterRpc(token);
+    const { paymentRequest }: { paymentRequest: string } = req.body;
+    const rpc = nodeManager.getRpc(token);
+    const routerRpc = nodeManager.getRouterRpc(token);
 
-    const call = rpc.sendPaymentV2({ paymentRequest });
+    const decodedPayReq = await rpc.decodePayReq({
+        payReq: paymentRequest,
+    });
 
-    // TODO: save to the database
+    const source = (await rpc.getInfo()).identityPubkey;
+
+    const payment = {
+        source,
+        destination: decodedPayReq.destination,
+        paymentHash: decodedPayReq.paymentHash,
+        value: parseInt(decodedPayReq.numSatoshis),
+        memo: decodedPayReq.description,
+        creationDate: decodedPayReq.timestamp,
+        paymentPreimage: null,
+        paymentRequest,
+        status: 1, // IN_FLIGHT
+    };
+
+    const existingPayment = await database.getPayment(payment.paymentHash);
+    if (existingPayment) {
+        res.status(400).send({ error: "Payment already done" });
+        return;
+    }
+
+    // Save to the database. Update the status (failed, in flight, etc) later
+    await database.savePayment(payment);
+
+    const call = routerRpc.sendPaymentV2({ paymentRequest });
+
+    // Attach error handler IMMEDIATELY to catch async errors
+    call.on("error", (error: any) => {
+        if (error.code === 6) {
+            console.error("Payment already paid");
+        } else {
+            console.error("Payment stream error:", error);
+            // update payment status to failed
+            database.updatePayment({
+                ...payment,
+                status: 3, // FAILED
+            });
+        }
+    });
+
     call.on("data", (response) => {
-        console.log("response", response);
-    });
-    call.on("status", (status) => {
-        console.log("status", status);
-    });
-    call.on("end", () => {
-        console.log("Server has closed the stream");
+        database.updatePayment({
+            ...payment,
+            paymentPreimage: response.paymentPreimage,
+            status: response.status,
+        });
     });
 
-    // TODO: what to return here?
-    res.send({});
+    res.send({
+        paymentHash: decodedPayReq.paymentHash,
+    });
 };
 
 /**

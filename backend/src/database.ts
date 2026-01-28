@@ -76,14 +76,15 @@ class Database {
             await client.query(`
                     CREATE TABLE IF NOT EXISTS payments (
                         id SERIAL PRIMARY KEY,
-                        hash VARCHAR(255) UNIQUE NOT NULL,
-                        payment_request TEXT NOT NULL,
-                        amount BIGINT NOT NULL,
+                        source VARCHAR(66) NOT NULL,
+                        destination VARCHAR(66) NOT NULL,
+                        payment_hash VARCHAR(255) UNIQUE NOT NULL,
+                        value BIGINT NOT NULL,
                         memo TEXT,
-                        settled BOOLEAN DEFAULT false,
                         creation_date TIMESTAMP,
-                        settle_date TIMESTAMP,
-                        expiry INT
+                        payment_preimage VARCHAR(255),
+                        payment_request TEXT NOT NULL,
+                        status INT NOT NULL
                     );
                 `);
 
@@ -261,6 +262,101 @@ class Database {
         const result = await this.query(
             "SELECT * FROM invoices WHERE hash = $1",
             [hash],
+        );
+
+        return result.rows[0];
+    }
+
+    async savePayment(payment: {
+        source: string;
+        destination: string;
+        paymentHash: string;
+        value: number;
+        memo: string;
+        creationDate: string;
+        paymentPreimage: string | null;
+        paymentRequest: string;
+        status: number;
+    }): Promise<void> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        const creationDateFormatted = new Date(
+            Number(payment.creationDate) * 1000,
+        );
+        await this.query(
+            `INSERT INTO payments (source, destination, payment_hash, value, memo, creation_date, payment_preimage, payment_request, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+            [
+                payment.source,
+                payment.destination,
+                payment.paymentHash,
+                payment.value,
+                payment.memo,
+                creationDateFormatted,
+                payment.paymentPreimage,
+                payment.paymentRequest,
+                payment.status,
+            ],
+        );
+    }
+
+    async updatePayment(payment: {
+        source: string;
+        destination: string;
+        paymentHash: string;
+        value: number;
+        memo: string;
+        creationDate: string;
+        paymentPreimage: string | null;
+        paymentRequest: string;
+        status: number;
+    }): Promise<void> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        const creationDateFormatted = new Date(
+            Number(payment.creationDate) * 1000,
+        );
+        await this.query(
+            `UPDATE payments SET source = $1, destination = $2, payment_hash = $3, value = $4, memo = $5, creation_date = $6, payment_preimage = $7, payment_request = $8, status = $9 WHERE payment_hash = $10`,
+            [
+                payment.source,
+                payment.destination,
+                payment.paymentHash,
+                payment.value,
+                payment.memo,
+                creationDateFormatted,
+                payment.paymentPreimage,
+                payment.paymentRequest,
+                payment.status,
+                payment.paymentHash,
+            ],
+        );
+    }
+
+    async getPayment(paymentHash: string): Promise<{
+        source: string;
+        destination: string;
+        paymentHash: string;
+        value: number;
+        memo: string;
+        creationDate: string;
+        paymentPreimage: string | null;
+        paymentRequest: string;
+        status: number;
+    }> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        const result = await this.query(
+            "SELECT * FROM payments WHERE payment_hash = $1",
+            [paymentHash],
         );
 
         return result.rows[0];
