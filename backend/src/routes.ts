@@ -198,8 +198,15 @@ export const paymentStatus = async (req: Request, res: Response) => {
  * GET /api/transactions
  */
 export const transactions = async (req: Request, res: Response) => {
-    // TODO: List all transactions from database
-    res.send({});
+    const invoices = await database.getInvoices();
+    const payments = await database.getPayments();
+
+    const txs = [
+        ...invoices.map((i: any) => ({ ...i, type: "invoice" })),
+        ...payments.map((p: any) => ({ ...p, type: "payment" })),
+    ].sort((a, b) => b.creationDate - a.creationDate);
+
+    res.send(txs);
 };
 
 /**
@@ -207,5 +214,16 @@ export const transactions = async (req: Request, res: Response) => {
  */
 export const balance = async (req: Request, res: Response) => {
     // TODO: Get total balance from recorded transactions (invoices received minus payments sent)
-    res.send({});
+    const invoices = await database.getInvoices();
+    const payments = await database.getPayments();
+    const totalInvoices = invoices.reduce(
+        (acc, invoice) => acc + Number(invoice.amount),
+        0,
+    );
+    const totalPayments = payments.reduce(
+        (acc, payment) => acc + Number(payment.value),
+        0,
+    );
+    const balance = totalInvoices - totalPayments;
+    res.send({ totalInvoices, totalPayments, balance });
 };

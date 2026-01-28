@@ -262,6 +262,26 @@ class Database {
         return result.rows[0];
     }
 
+    async getInvoices(): Promise<
+        {
+            hash: string;
+            payreq: string;
+            amount: number;
+            memo: string;
+            creationDate: string | undefined;
+            expiry: string | undefined;
+        }[]
+    > {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        const result = await this.query("SELECT * FROM invoices");
+
+        return result.rows;
+    }
+
     async savePayment(payment: {
         source: string;
         destination: string;
@@ -355,6 +375,29 @@ class Database {
         );
 
         return result.rows[0];
+    }
+
+    async getPayments(): Promise<
+        {
+            source: string;
+            destination: string;
+            paymentHash: string;
+            value: number;
+            memo: string;
+            creationDate: string;
+            paymentPreimage: string | null;
+            paymentRequest: string;
+            status: number;
+        }[]
+    > {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        const result = await this.query("SELECT * FROM payments");
+
+        return result.rows;
     }
 }
 
