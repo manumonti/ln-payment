@@ -32,7 +32,7 @@ async function startServer() {
             server.close(() => {
                 console.log("HTTP server closed");
             });
-            // await database.close();
+            await database.close();
             process.exit(0);
         });
 
@@ -41,7 +41,7 @@ async function startServer() {
             server.close(() => {
                 console.log("HTTP server closed");
             });
-            // await database.close();
+            await database.close();
             process.exit(0);
         });
     } catch (error) {
