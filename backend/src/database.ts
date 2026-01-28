@@ -67,7 +67,9 @@ class Database {
                         amount BIGINT NOT NULL,
                         memo TEXT,
                         creation_date TIMESTAMP,
-                        expiry INT
+                        expiry INT,
+                        settled BOOLEAN,
+                        settle_date TIMESTAMP
                     );
                 `);
 
@@ -175,9 +177,7 @@ class Database {
         payreq: string,
         amount: number,
         memo: string,
-        settled: boolean,
         creationDate: string | undefined,
-        settleDate: string | undefined,
         expiry: string | undefined,
     ): Promise<void> {
         if (!this.pool) {
@@ -189,13 +189,10 @@ class Database {
         const creationDateFormatted = creationDate
             ? new Date(Number(creationDate) * 1000)
             : null;
-        const settleDateFormatted = settleDate
-            ? new Date(Number(settleDate) * 1000)
-            : null;
         const expiryFormatted = expiry ? Number(expiry) : null;
 
         await this.query(
-            `INSERT INTO invoices (hash, payment_request, amount, memo, creation_date, expiry) VALUES ($1, $2, $3, $4, $5, $6)`,
+            `INSERT INTO invoices (hash, payment_request, amount, memo, creation_date, expiry, settled, settle_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
             [
                 hash,
                 payreq,
@@ -203,7 +200,26 @@ class Database {
                 memo,
                 creationDateFormatted,
                 expiryFormatted,
+                false,
+                null,
             ],
+        );
+    }
+
+    async updateInvoice(
+        hash: string,
+        settled: boolean,
+        settleDate: string,
+    ): Promise<void> {
+        if (!this.pool) {
+            throw new Error(
+                "Database pool is not initialized. Call connect() first.",
+            );
+        }
+        const settleDateFormatted = new Date(Number(settleDate) * 1000);
+        await this.query(
+            `UPDATE invoices SET settled = $2, settle_date = $3 WHERE hash = $1`,
+            [hash, settled, settleDateFormatted],
         );
     }
 

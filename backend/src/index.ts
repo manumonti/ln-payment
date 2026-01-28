@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import database from "./database";
-import nodeManager from "./node-manager";
+import nodeManager, { NodeEvents } from "./node-manager";
 import app from "./server";
 dotenv.config({ path: "../.env" });
 
@@ -20,6 +20,14 @@ async function startServer() {
         // Reconnect to LND nodes
         const nodes = await database.getNodes();
         await nodeManager.reconnectNodes(nodes);
+
+        // Listen for invoice payments and update database
+        nodeManager.on(
+            NodeEvents.invoicePaid,
+            async ({ hash, pubkey, settled, settleDate }) => {
+                await database.updateInvoice(hash, settled, settleDate);
+            },
+        );
 
         // Start the Express server
         const server = app.listen(port, () => {

@@ -146,11 +146,16 @@ class NodeManager extends EventEmitter {
      */
     listenForPayments(rpc: LnRpc, pubkey: string) {
         const stream = rpc.subscribeInvoices();
+
         stream.on("data", (invoice) => {
             if (invoice.settled) {
-                const hash = (invoice.rHash as Buffer).toString("base64");
-                const amount = invoice.amtPaidSat;
-                this.emit(NodeEvents.invoicePaid, { hash, amount, pubkey });
+                const hash = (invoice.rHash as Buffer).toString("hex");
+                this.emit(NodeEvents.invoicePaid, {
+                    hash,
+                    pubkey,
+                    settled: invoice.settled,
+                    settleDate: invoice.settleDate,
+                });
             }
         });
     }
