@@ -1,11 +1,13 @@
 "use client";
 
 import { Button } from "@/components/base/buttons/button";
+import { useRouter } from "next/navigation";
 
 export const PageFooter = () => {
+    const router = useRouter();
+
     const handleTransactions = () => {
-        console.log("Transactions clicked");
-        // TODO: Navigate to transactions page or open transactions modal
+        router.push("/transactions");
     };
 
     const handleBalance = () => {
