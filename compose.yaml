@@ -1,5 +1,13 @@
 name: ln-payment
 services:
+    frontend:
+        container_name: frontend
+        build: ./frontend
+        ports:
+            - "${FRONTEND_PORT}:4000"
+        depends_on:
+            - backend
+
     backend:
         container_name: backend
         build: ./backend
