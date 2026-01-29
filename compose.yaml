@@ -12,6 +12,7 @@ services:
         container_name: backend
         build: ./backend
         environment:
+            - FRONTEND_PORT=${FRONTEND_PORT}
             - SERVER_PORT=${SERVER_PORT}
             - POSTGRES_HOST=${POSTGRES_HOST}
             - POSTGRES_PORT=${POSTGRES_PORT}
