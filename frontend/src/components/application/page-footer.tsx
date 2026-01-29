@@ -11,8 +11,7 @@ export const PageFooter = () => {
     };
 
     const handleBalance = () => {
-        console.log("Balance clicked");
-        // TODO: Navigate to balance page or open balance modal
+        router.push("/balance");
     };
 
     return (
