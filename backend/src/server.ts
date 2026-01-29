@@ -1,6 +1,12 @@
+import cors from "cors";
+import dotenv from "dotenv";
 import express, { Request, Response } from "express";
 import morgan from "morgan";
 import * as routes from "./routes";
+
+// Load .env file only if it exists (for local development)
+// In Docker, environment variables are injected via docker-compose
+dotenv.config({ path: "../.env" });
 
 const app = express();
 
@@ -9,6 +15,17 @@ const app = express();
  * which is a best practice in Docker
  */
 app.use(morgan("common"));
+
+/**
+ * Enable CORS to allow frontend to make requests to backend
+ */
+app.use(
+    cors({
+        origin: `http://localhost:${process.env.FRONTEND_PORT}`,
+        credentials: true,
+    }),
+);
+
 app.use(express.json());
 
 /**
