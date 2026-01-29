@@ -65,40 +65,17 @@ export const createInvoice = async (req: Request, res: Response) => {
  * GET /api/invoice/:payment_hash
  */
 export const invoiceStatus = async (req: Request, res: Response) => {
-    const token = req.header("X-Token");
-    if (!token) throw new Error("Missing token");
-
     const { payment_hash } = req.params;
 
-    // no need to get invoice from db since lookupInvoice returns all the data
-    const rpc = nodeManager.getRpc(token);
-    const inv = await rpc.lookupInvoice({
-        rHash: Buffer.from(payment_hash as string, "hex"),
-    });
+    // no calls to LND needed since the invoice status is synced in db
+    const inv = await database.getInvoice(payment_hash as string);
 
     if (!inv) {
         res.status(404).send({ error: "No invoice found" });
+        return;
     }
 
-    const rHash = (inv.rHash as Buffer).toString("hex");
-    const paymentRequest = inv.paymentRequest;
-    const amount = inv.value;
-    const memo = inv.memo;
-    const settled = inv.settled || false;
-    const creationDate = inv.creationDate;
-    const settleDate = inv.settleDate || null;
-    const expiry = inv.expiry;
-
-    res.send({
-        rHash,
-        paymentRequest,
-        amount,
-        memo,
-        settled,
-        creationDate,
-        settleDate,
-        expiry,
-    });
+    res.send(inv);
 };
 
 /**
