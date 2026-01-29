@@ -16,6 +16,9 @@ services:
             - "${SERVER_PORT}:3000"
         depends_on:
             - postgres
+        networks:
+            - default
+            - polar-network
 
     postgres:
         container_name: postgres
@@ -37,3 +40,8 @@ services:
         ports:
             - "${PGADMIN_PORT}:80"
         restart: always
+
+networks:
+    polar-network:
+        external: true
+        name: polar-network-1_default
