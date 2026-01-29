@@ -78,7 +78,7 @@ class NodeManager extends EventEmitter {
             });
 
             // verify we have permission get node info
-            const { identityPubkey: pubkey } = await rpc.getInfo();
+            const { identityPubkey: pubkey, alias } = await rpc.getInfo();
 
             // verify we have permission to get channel balances
             await rpc.channelBalance();
@@ -109,7 +109,7 @@ class NodeManager extends EventEmitter {
             database.saveNode(token, host, cert, macaroon, pubkey);
 
             // return this node's token for future requests
-            return { token, pubkey };
+            return { token, pubkey, alias };
         } catch (err) {
             // remove the connection from the cache since it is not valid
             if (this._lndNodes[token]) {

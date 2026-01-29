@@ -7,8 +7,12 @@ import nodeManager from "./node-manager";
  */
 export const connect = async (req: Request, res: Response) => {
     const { host, cert, macaroon } = req.body;
-    const { token } = await nodeManager.connect(host, cert, macaroon);
-    res.send({ token });
+    const { token, pubkey, alias } = await nodeManager.connect(
+        host,
+        cert,
+        macaroon,
+    );
+    res.send({ token, pubkey, alias });
 };
 
 /**
