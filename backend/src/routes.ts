@@ -2,14 +2,6 @@ import { Request, Response } from "express";
 import database from "./database";
 import nodeManager from "./node-manager";
 
-const statusLabels: Record<number, string> = {
-    0: "UNKNOWN",
-    1: "IN_FLIGHT",
-    2: "SUCCEEDED",
-    3: "FAILED",
-    4: "INITIATED",
-};
-
 /**
  * POST /api/connect
  */
@@ -150,8 +142,8 @@ export const payInvoice = async (req: Request, res: Response) => {
  * GET /api/payment/:payment_hash
  */
 export const paymentStatus = async (req: Request, res: Response) => {
-    // Get the status from the DB since this is synced
     const { payment_hash } = req.params;
+    // no calls to LND needed since the payment status is synced in db
     const payment = await database.getPayment(payment_hash as string);
 
     if (!payment) {
@@ -159,10 +151,7 @@ export const paymentStatus = async (req: Request, res: Response) => {
         return;
     }
 
-    res.send({
-        payment_hash,
-        status: statusLabels[payment.status],
-    });
+    res.send(payment);
 };
 
 /**
