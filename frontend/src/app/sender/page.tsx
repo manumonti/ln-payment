@@ -6,6 +6,7 @@ import {
 } from "@/components/application/node-header";
 import { Payment } from "@/components/application/payment-element";
 import { PaymentList } from "@/components/application/payment-list";
+import { PaymentLookup } from "@/components/application/payment-lookup";
 import { SendPaymentModal } from "@/components/application/send-payment-modal";
 import { useEffect, useState } from "react";
 
@@ -114,6 +115,9 @@ export default function ReceiverPage() {
                             token={token}
                         />
                     </div>
+
+                    {/* Payment Lookup Section */}
+                    <PaymentLookup />
 
                     {/* Payment List */}
                     <PaymentList payments={payments} />
