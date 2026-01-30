@@ -4,7 +4,11 @@ import { Badge } from "@/components/base/badges/badges";
 import { useState } from "react";
 import { ConnectLndModal } from "./connect-lnd-modal";
 
-export const NodeHeader = () => {
+interface NodeHeaderProps {
+    setToken: (token: string | null) => void;
+}
+
+export const NodeHeader = ({ setToken }: NodeHeaderProps) => {
     const [alias, setAlias] = useState<string>("");
     const [pubKey, setPubKey] = useState<string>("");
 
@@ -22,6 +26,7 @@ export const NodeHeader = () => {
             .then((data) => {
                 setAlias(data.alias);
                 setPubKey(data.pubkey);
+                setToken(data.token);
             })
             .catch((err) => console.log(err));
     };
