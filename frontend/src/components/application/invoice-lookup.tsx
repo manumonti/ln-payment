@@ -69,9 +69,6 @@ export const InvoiceLookup = ({ token }: InvoiceLookupProps) => {
                 settleDate: settleDate,
             };
 
-            console.log(data);
-            console.log(retrievedInvoice);
-
             setInvoice(retrievedInvoice);
         } catch (err) {
             setError(err instanceof Error ? err.message : "An error occurred");

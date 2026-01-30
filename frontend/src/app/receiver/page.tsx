@@ -61,7 +61,6 @@ export default function ReceiverPage() {
                 return invoice;
             });
 
-            console.log(invoicesRetrieved);
             setInvoices(invoicesRetrieved);
         } catch (err) {
             console.error(err);
