@@ -1,6 +1,14 @@
 "use client";
 
 import { Badge } from "@/components/base/badges/badges";
+import {
+    InvoiceElement,
+    Invoice,
+} from "@/components/application/invoice-element";
+import {
+    PaymentElement,
+    Payment,
+} from "@/components/application/payment-element";
 import { useEffect, useState } from "react";
 
 interface Transaction {
@@ -13,6 +21,10 @@ interface Transaction {
     date: Date;
     source?: string;
     destination?: string;
+    paymentRequest?: string;
+    expiry?: string;
+    settleDate?: string;
+    paymentPreImage?: string;
 }
 
 export default function TransactionsPage() {
@@ -43,6 +55,9 @@ export default function TransactionsPage() {
                     memo: tx.memo,
                     status: tx.settled ? "completed" : "pending",
                     date: new Date(tx.creation_date),
+                    paymentRequest: tx.payment_request || "",
+                    expiry: tx.expiry || "3600",
+                    settleDate: tx.settle_date,
                 };
             } else if (tx.type === "payment") {
                 let status: "pending" | "completed" | "failed";
@@ -63,6 +78,8 @@ export default function TransactionsPage() {
                     date: new Date(tx.creation_date),
                     source: tx.source,
                     destination: tx.destination,
+                    paymentRequest: tx.payment_request || "",
+                    paymentPreImage: tx.payment_preimage || "",
                 };
             }
         });
@@ -104,88 +121,64 @@ export default function TransactionsPage() {
                                 </p>
                             </div>
                         ) : (
-                            transactions.map((tx) => (
-                                <div
-                                    key={tx.id}
-                                    className="group relative rounded-xl border border-secondary bg-primary p-6 shadow-sm transition-all hover:shadow-md hover:border-brand-primary/50"
-                                >
-                                    {/* Transaction Header */}
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <Badge type="modern" size="md">
-                                                {tx.type}
-                                            </Badge>
-                                            <Badge type="modern" size="md">
-                                                {tx.status
-                                                    .charAt(0)
-                                                    .toUpperCase() +
-                                                    tx.status.slice(1)}
-                                            </Badge>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-xs font-medium text-tertiary uppercase tracking-wide mb-1">
-                                                Amount
-                                            </p>
-                                            <p className="text-2xl font-bold text-brand-primary">
-                                                {tx.amount.toLocaleString()}{" "}
-                                                <span className="text-sm font-medium">
-                                                    sats
-                                                </span>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Transaction Hash */}
-                                    <div className="mb-4">
-                                        <p className="text-xs font-medium text-tertiary uppercase tracking-wide mb-2">
-                                            Hash
-                                        </p>
-                                        <code className="block rounded-md bg-secondary px-3 py-2 font-mono text-xs text-primary break-all">
-                                            {tx.hash}
-                                        </code>
-                                    </div>
-
-                                    {/* Transaction Details Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-secondary">
-                                        <div>
-                                            <p className="text-xs font-medium text-tertiary uppercase tracking-wide mb-1">
-                                                Memo
-                                            </p>
-                                            <p className="text-sm text-primary">
-                                                {tx.memo || "No memo"}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-medium text-tertiary uppercase tracking-wide mb-1">
-                                                Date
-                                            </p>
-                                            <p className="text-sm text-secondary">
-                                                {formatDate(tx.date)}
-                                            </p>
-                                        </div>
-                                        {tx.source && (
-                                            <div>
-                                                <p className="text-xs font-medium text-tertiary uppercase tracking-wide mb-1">
-                                                    Source
-                                                </p>
-                                                <p className="text-sm text-primary font-mono break-all">
-                                                    {tx.source}
-                                                </p>
-                                            </div>
-                                        )}
-                                        {tx.destination && (
-                                            <div>
-                                                <p className="text-xs font-medium text-tertiary uppercase tracking-wide mb-1">
-                                                    Destination
-                                                </p>
-                                                <p className="text-sm text-primary font-mono break-all">
-                                                    {tx.destination}
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))
+                            transactions.map((tx, index) => {
+                                if (tx.type === "Invoice") {
+                                    // Map transaction data to Invoice interface
+                                    const invoice: Invoice = {
+                                        amount: tx.amount,
+                                        creationDate: (
+                                            tx.date.getTime() / 1000
+                                        ).toString(),
+                                        expiry: tx.expiry || "3600",
+                                        memo: tx.memo,
+                                        paymentRequest: tx.paymentRequest || "",
+                                        rHash: tx.hash,
+                                        status:
+                                            tx.status === "completed"
+                                                ? "Completed"
+                                                : tx.status === "pending"
+                                                  ? "Pending"
+                                                  : "Expired",
+                                        settleDate: tx.settleDate || null,
+                                    };
+                                    return (
+                                        <InvoiceElement
+                                            key={tx.id}
+                                            invoice={invoice}
+                                            index={index}
+                                        />
+                                    );
+                                } else if (tx.type === "Payment") {
+                                    // Map transaction data to Payment interface
+                                    const payment: Payment = {
+                                        amount: tx.amount,
+                                        creationDate: (
+                                            tx.date.getTime() / 1000
+                                        ).toString(),
+                                        memo: tx.memo,
+                                        paymentRequest: tx.paymentRequest || "",
+                                        rHash: tx.hash,
+                                        status:
+                                            tx.status === "completed"
+                                                ? "Completed"
+                                                : tx.status === "failed"
+                                                  ? "Failed"
+                                                  : "Pending",
+                                        paymentPreImage:
+                                            tx.paymentPreImage || "",
+                                        source: tx.source || "",
+                                        destination: tx.destination || "",
+                                    };
+                                    return (
+                                        <PaymentElement
+                                            key={tx.id}
+                                            payment={payment}
+                                            index={index}
+                                        />
+                                    );
+                                }
+                                return null;
+                            })
                         )}
                     </div>
                 </div>
