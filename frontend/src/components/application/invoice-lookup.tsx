@@ -9,11 +9,7 @@ import { Input } from "@/components/base/input/input";
 import { SearchLg } from "@untitledui/icons";
 import { useState } from "react";
 
-interface InvoiceLookupProps {
-    token: string | null;
-}
-
-export const InvoiceLookup = ({ token }: InvoiceLookupProps) => {
+export const InvoiceLookup = () => {
     const [paymentHash, setPaymentHash] = useState("");
     const [invoice, setInvoice] = useState<Invoice | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -98,7 +94,7 @@ export const InvoiceLookup = ({ token }: InvoiceLookupProps) => {
                             type="text"
                             value={paymentHash}
                             onChange={setPaymentHash}
-                            isDisabled={isLoading || !token}
+                            isDisabled={isLoading}
                             size="md"
                         />
                     </div>
@@ -106,7 +102,7 @@ export const InvoiceLookup = ({ token }: InvoiceLookupProps) => {
                         type="submit"
                         color="primary"
                         size="lg"
-                        isDisabled={isLoading || !token}
+                        isDisabled={isLoading}
                         className="px-8"
                     >
                         {isLoading ? (

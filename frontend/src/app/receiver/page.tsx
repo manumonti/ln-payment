@@ -92,7 +92,7 @@ export default function ReceiverPage() {
                     </div>
 
                     {/* Invoice Lookup Section */}
-                    <InvoiceLookup token={token} />
+                    <InvoiceLookup />
 
                     {/* Invoice List */}
                     <InvoiceList invoices={invoices} />
