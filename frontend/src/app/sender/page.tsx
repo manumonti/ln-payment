@@ -1,6 +1,6 @@
 "use client";
 
-import { CreateInvoiceModal } from "@/components/application/create-invoice-modal";
+import { SendPaymentModal } from "@/components/application/send-payment-modal";
 import { NodeHeader } from "@/components/application/node-header";
 import { Payment } from "@/components/application/payment-element";
 import { PaymentList } from "@/components/application/payment-list";
@@ -10,7 +10,7 @@ export default function ReceiverPage() {
     const [token, setToken] = useState<string | null>(null);
     const [payments, setPayments] = useState<Payment[]>([]);
 
-    const handleInvoiceCreated = (payment: Payment) => {
+    const handlePaymentMade = (payment: Payment) => {
         // Refresh the payments list from the backend
         getPayments();
     };
@@ -96,13 +96,12 @@ export default function ReceiverPage() {
                                 request
                             </p>
                         </div>
-                        <CreateInvoiceModal
-                            onInvoiceCreated={handleInvoiceCreated}
+                        <SendPaymentModal
+                            onPaymentMade={handlePaymentMade}
                             token={token}
                         />
                     </div>
-                    {/* Invoice Lookup Section */}
-                    {/* <InvoiceLookup /> */}
+
                     {/* Payment List */}
                     <PaymentList payments={payments} />
                 </div>
