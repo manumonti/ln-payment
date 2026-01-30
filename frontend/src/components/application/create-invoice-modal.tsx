@@ -10,7 +10,7 @@ import {
     ModalOverlay,
 } from "@/components/application/modals/modal";
 import { X } from "@untitledui/icons";
-import { Invoice } from "../../app/receiver/page";
+import { Invoice } from "@/components/application/invoice-element";
 
 interface CreateInvoiceModalProps {
     onInvoiceCreated: (invoice: Invoice) => void;
