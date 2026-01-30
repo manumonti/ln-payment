@@ -5,7 +5,6 @@ import { Invoice } from "@/components/application/invoice-element";
 import { InvoiceList } from "@/components/application/invoice-list";
 import { InvoiceLookup } from "@/components/application/invoice-lookup";
 import { NodeHeader } from "@/components/application/node-header";
-import { PageFooter } from "@/components/application/page-footer";
 import { useEffect, useState } from "react";
 
 export default function ReceiverPage() {
@@ -99,7 +98,6 @@ export default function ReceiverPage() {
                     <InvoiceList invoices={invoices} />
                 </div>
             </main>
-            <PageFooter />
         </div>
     );
 }
