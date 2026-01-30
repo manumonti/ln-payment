@@ -82,6 +82,9 @@ export const InvoiceElement = ({
                             <Zap className="size-6 text-white" />
                         </div>
                         <div>
+                            <span className="text-[10px] uppercase font-bold tracking-widest text-blue-600 dark:text-blue-400 mb-0.5 block">
+                                Invoice
+                            </span>
                             <h3 className="font-bold text-primary text-xl">
                                 {formatAmount(invoice.amount)} sats
                             </h3>

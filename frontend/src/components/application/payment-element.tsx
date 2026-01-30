@@ -77,6 +77,9 @@ export const PaymentElement = ({
                             <Zap className="size-6 text-white" />
                         </div>
                         <div>
+                            <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 mb-0.5 block">
+                                Payment
+                            </span>
                             <h3 className="font-bold text-primary text-xl">
                                 {formatAmount(payment.amount)} sats
                             </h3>
