@@ -1,28 +1,76 @@
 "use client";
 
 import { CreateInvoiceModal } from "@/components/application/create-invoice-modal";
+import { Invoice } from "@/components/application/invoice-element";
 import { InvoiceList } from "@/components/application/invoice-list";
+import { InvoiceLookup } from "@/components/application/invoice-lookup";
 import { NodeHeader } from "@/components/application/node-header";
 import { PageFooter } from "@/components/application/page-footer";
-import { useState } from "react";
-
-export interface Invoice {
-    amount: number;
-    creationDate: string;
-    expiry: string;
-    memo: string;
-    paymentRequest: string;
-    rHash: string;
-    status: string;
-}
+import { useEffect, useState } from "react";
 
 export default function ReceiverPage() {
     const [token, setToken] = useState<string | null>(null);
     const [invoices, setInvoices] = useState<Invoice[]>([]);
 
     const handleInvoiceCreated = (invoice: Invoice) => {
-        setInvoices((prev) => [...prev, invoice]);
+        // Refresh the invoice list from the backend
+        getInvoices();
     };
+
+    const getInvoices = async () => {
+        try {
+            const response = await fetch(
+                "http://localhost:3000/api/transactions",
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to get invoices");
+            }
+
+            const data = await response.json();
+
+            // data includes all transactions: invoices + payments
+            const dataFiltered = data.filter(
+                (transaction: any) => transaction.type === "invoice",
+            );
+
+            const invoicesRetrieved = dataFiltered.map((inv: any) => {
+                const creationDate = (
+                    new Date(inv.creation_date).getTime() / 1000
+                ).toString();
+                const settleDate = inv.settle_date
+                    ? (new Date(inv.settle_date).getTime() / 1000).toString()
+                    : null;
+                const invoice: Invoice = {
+                    amount: inv.amount,
+                    creationDate: creationDate,
+                    expiry: inv.expiry,
+                    memo: inv.memo,
+                    paymentRequest: inv.payment_request,
+                    rHash: inv.hash,
+                    status: inv.settled ? "Completed" : "Pending",
+                    settleDate: settleDate,
+                };
+                return invoice;
+            });
+
+            console.log(invoicesRetrieved);
+            setInvoices(invoicesRetrieved);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        getInvoices();
+    }, []);
 
     return (
         <div className="flex h-dvh flex-col bg-primary">
@@ -44,6 +92,9 @@ export default function ReceiverPage() {
                             token={token}
                         />
                     </div>
+
+                    {/* Invoice Lookup Section */}
+                    <InvoiceLookup token={token} />
 
                     {/* Invoice List */}
                     <InvoiceList invoices={invoices} />

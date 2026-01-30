@@ -88,7 +88,7 @@ export const InvoiceLookup = ({ token }: InvoiceLookupProps) => {
                     Lookup Invoice
                 </h2>
                 <p className="text-sm text-secondary">
-                    Search for an invoice using its payment hash
+                    Search for an invoice using its invoice hash
                 </p>
             </div>
 
@@ -97,7 +97,7 @@ export const InvoiceLookup = ({ token }: InvoiceLookupProps) => {
                 <div className="flex gap-3">
                     <div className="flex-1">
                         <Input
-                            placeholder="Enter payment hash (r_hash)"
+                            placeholder="Enter invoice hash"
                             type="text"
                             value={paymentHash}
                             onChange={setPaymentHash}
