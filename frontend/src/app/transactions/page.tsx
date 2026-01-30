@@ -1,15 +1,15 @@
 "use client";
 
-import { Badge } from "@/components/base/badges/badges";
 import {
-    InvoiceElement,
     Invoice,
+    InvoiceElement,
 } from "@/components/application/invoice-element";
 import {
-    PaymentElement,
     Payment,
+    PaymentElement,
 } from "@/components/application/payment-element";
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 interface Transaction {
     type: "Invoice" | "Payment";
@@ -31,16 +31,6 @@ export default function TransactionsPage() {
     const [transactions, setTransactions] = useState<Transaction[] | undefined>(
         undefined,
     );
-
-    const formatDate = (date: Date) => {
-        return date.toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    };
 
     const getTransactions = async () => {
         const res = await fetch("http://localhost:3000/api/transactions");
@@ -93,6 +83,15 @@ export default function TransactionsPage() {
 
     useEffect(() => {
         getTransactions();
+
+        const socket = io("http://localhost:3000");
+        socket.on("invoice-paid", () => {
+            getTransactions();
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
     return (

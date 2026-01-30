@@ -9,6 +9,7 @@ import {
     NodeHeader,
 } from "@/components/application/node-header";
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 export default function ReceiverPage() {
     // a little help to debug the app
@@ -77,6 +78,15 @@ export default function ReceiverPage() {
 
     useEffect(() => {
         getInvoices();
+
+        const socket = io("http://localhost:3000");
+        socket.on("invoice-paid", () => {
+            getInvoices();
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
     return (
