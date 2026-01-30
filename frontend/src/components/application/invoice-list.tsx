@@ -32,27 +32,37 @@ export const InvoiceList = ({ invoices }: InvoiceListProps) => {
     });
 
     return (
-        <div className="space-y-4">
-            {sortedInvoices.map((invoice, index) => (
-                <InvoiceElement
-                    key={invoice.rHash}
-                    invoice={invoice}
-                    index={index}
-                />
-            ))}
+        <div>
+            {/* Section Header */}
+            <div className="mb-6">
+                <h2 className="text-xl font-bold text-primary mb-1">
+                    Invoice List
+                </h2>
+            </div>
 
-            <style jsx>{`
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
+            {/* Invoice Items */}
+            <div className="space-y-4">
+                {sortedInvoices.map((invoice, index) => (
+                    <InvoiceElement
+                        key={invoice.rHash}
+                        invoice={invoice}
+                        index={index}
+                    />
+                ))}
+
+                <style jsx>{`
+                    @keyframes fadeIn {
+                        from {
+                            opacity: 0;
+                            transform: translateY(20px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
                     }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            `}</style>
+                `}</style>
+            </div>
         </div>
     );
 };
