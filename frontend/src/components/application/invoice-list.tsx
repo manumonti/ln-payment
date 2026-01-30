@@ -11,8 +11,6 @@ interface InvoiceListProps {
 export const InvoiceList = ({ invoices }: InvoiceListProps) => {
     const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
-    console.log(invoices);
-
     const copyToClipboard = async (text: string, hash: string) => {
         try {
             await navigator.clipboard.writeText(text);
@@ -73,9 +71,14 @@ export const InvoiceList = ({ invoices }: InvoiceListProps) => {
         );
     }
 
+    // Sort invoices by creation date in descending order (newest first)
+    const sortedInvoices = [...invoices].sort((a, b) => {
+        return parseInt(b.creationDate) - parseInt(a.creationDate);
+    });
+
     return (
         <div className="space-y-4">
-            {invoices.map((invoice, index) => (
+            {sortedInvoices.map((invoice, index) => (
                 <div
                     key={invoice.rHash}
                     className="group relative overflow-hidden rounded-2xl border border-secondary bg-primary p-6 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-violet-500/50 hover:-translate-y-1"
