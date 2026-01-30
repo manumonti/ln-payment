@@ -1,12 +1,22 @@
 "use client";
 
-import { SendPaymentModal } from "@/components/application/send-payment-modal";
-import { NodeHeader } from "@/components/application/node-header";
+import {
+    LndConnectionData,
+    NodeHeader,
+} from "@/components/application/node-header";
 import { Payment } from "@/components/application/payment-element";
 import { PaymentList } from "@/components/application/payment-list";
+import { SendPaymentModal } from "@/components/application/send-payment-modal";
 import { useEffect, useState } from "react";
 
 export default function ReceiverPage() {
+    // a little help to debug the app
+    const lndConnectionData: LndConnectionData = {
+        host: process.env.NEXT_PUBLIC_BOB_HOST || "",
+        cert: process.env.NEXT_PUBLIC_BOB_CERT || "",
+        macaroon: process.env.NEXT_PUBLIC_BOB_MACAROON || "",
+    };
+
     const [token, setToken] = useState<string | null>(null);
     const [payments, setPayments] = useState<Payment[]>([]);
 
@@ -82,7 +92,10 @@ export default function ReceiverPage() {
 
     return (
         <div className="flex h-dvh flex-col bg-primary">
-            <NodeHeader setToken={setToken} />
+            <NodeHeader
+                connectionData={lndConnectionData}
+                setToken={setToken}
+            />
             <main className="flex-1 overflow-y-auto px-4 py-8 md:px-8">
                 <div className="mx-auto max-w-7xl">
                     {/* Page Header */}

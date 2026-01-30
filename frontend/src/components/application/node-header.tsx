@@ -4,11 +4,18 @@ import { Badge } from "@/components/base/badges/badges";
 import { useState } from "react";
 import { ConnectLndModal } from "./connect-lnd-modal";
 
+export interface LndConnectionData {
+    host: string;
+    cert: string;
+    macaroon: string;
+}
+
 interface NodeHeaderProps {
+    connectionData: LndConnectionData;
     setToken: (token: string | null) => void;
 }
 
-export const NodeHeader = ({ setToken }: NodeHeaderProps) => {
+export const NodeHeader = ({ connectionData, setToken }: NodeHeaderProps) => {
     const [alias, setAlias] = useState<string>("");
     const [pubKey, setPubKey] = useState<string>("");
 
@@ -28,7 +35,7 @@ export const NodeHeader = ({ setToken }: NodeHeaderProps) => {
                 setPubKey(data.pubkey);
                 setToken(data.token);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => console.error(err));
     };
 
     return (
@@ -52,7 +59,10 @@ export const NodeHeader = ({ setToken }: NodeHeaderProps) => {
                 )}
 
                 {/* Modal button on the right side */}
-                <ConnectLndModal onConnect={handleConnect} />
+                <ConnectLndModal
+                    connectionData={connectionData}
+                    onConnect={handleConnect}
+                />
             </div>
         </header>
     );

@@ -11,36 +11,22 @@ import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Input } from "@/components/base/input/input";
 import { X } from "@untitledui/icons";
 import { useState, type FC } from "react";
-
-interface LndConnectionData {
-    host: string;
-    cert: string;
-    macaroon: string;
-}
+import { LndConnectionData } from "@/components/application/node-header";
 
 interface ConnectLndModalProps {
+    connectionData: LndConnectionData;
     onConnect: (data: LndConnectionData) => void;
     trigger?: React.ReactNode;
 }
 
 export const ConnectLndModal: FC<ConnectLndModalProps> = ({
+    connectionData,
     onConnect,
     trigger,
 }) => {
-    // We can set this env variables in .env.local for debugging
-    const defaultHost = process.env.NEXT_PUBLIC_HOST
-        ? process.env.NEXT_PUBLIC_HOST
-        : "";
-    const defaultCert = process.env.NEXT_PUBLIC_CERT
-        ? process.env.NEXT_PUBLIC_CERT
-        : "";
-    const defaultMacaroon = process.env.NEXT_PUBLIC_MACAROON
-        ? process.env.NEXT_PUBLIC_MACAROON
-        : "";
-
-    const [host, setHost] = useState(defaultHost);
-    const [cert, setCert] = useState(defaultCert);
-    const [macaroon, setMacaroon] = useState(defaultMacaroon);
+    const [host, setHost] = useState(connectionData.host);
+    const [cert, setCert] = useState(connectionData.cert);
+    const [macaroon, setMacaroon] = useState(connectionData.macaroon);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
