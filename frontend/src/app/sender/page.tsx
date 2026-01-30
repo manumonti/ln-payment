@@ -10,7 +10,7 @@ export default function ReceiverPage() {
     const [token, setToken] = useState<string | null>(null);
     const [payments, setPayments] = useState<Payment[]>([]);
 
-    const handlePaymentMade = (payment: Payment) => {
+    const handlePaymentSent = (payment: Payment) => {
         // Refresh the payments list from the backend
         getPayments();
     };
@@ -97,7 +97,7 @@ export default function ReceiverPage() {
                             </p>
                         </div>
                         <SendPaymentModal
-                            onPaymentMade={handlePaymentMade}
+                            onPaymentSent={handlePaymentSent}
                             token={token}
                         />
                     </div>
