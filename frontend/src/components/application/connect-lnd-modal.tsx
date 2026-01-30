@@ -28,14 +28,14 @@ export const ConnectLndModal: FC<ConnectLndModalProps> = ({
     trigger,
 }) => {
     // We can set this env variables in .env.local for debugging
-    const defaultHost = process.env.NEXT_PUBLIC_ALICE_HOST
-        ? process.env.NEXT_PUBLIC_ALICE_HOST
+    const defaultHost = process.env.NEXT_PUBLIC_HOST
+        ? process.env.NEXT_PUBLIC_HOST
         : "";
-    const defaultCert = process.env.NEXT_PUBLIC_ALICE_CERT
-        ? process.env.NEXT_PUBLIC_ALICE_CERT
+    const defaultCert = process.env.NEXT_PUBLIC_CERT
+        ? process.env.NEXT_PUBLIC_CERT
         : "";
-    const defaultMacaroon = process.env.NEXT_PUBLIC_ALICE_MACAROON
-        ? process.env.NEXT_PUBLIC_ALICE_MACAROON
+    const defaultMacaroon = process.env.NEXT_PUBLIC_MACAROON
+        ? process.env.NEXT_PUBLIC_MACAROON
         : "";
 
     const [host, setHost] = useState(defaultHost);
