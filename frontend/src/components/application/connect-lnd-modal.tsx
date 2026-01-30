@@ -27,9 +27,20 @@ export const ConnectLndModal: FC<ConnectLndModalProps> = ({
     onConnect,
     trigger,
 }) => {
-    const [host, setHost] = useState("");
-    const [cert, setCert] = useState("");
-    const [macaroon, setMacaroon] = useState("");
+    // We can set this env variables in .env.local for debugging
+    const defaultHost = process.env.NEXT_PUBLIC_ALICE_HOST
+        ? process.env.NEXT_PUBLIC_ALICE_HOST
+        : "";
+    const defaultCert = process.env.NEXT_PUBLIC_ALICE_CERT
+        ? process.env.NEXT_PUBLIC_ALICE_CERT
+        : "";
+    const defaultMacaroon = process.env.NEXT_PUBLIC_ALICE_MACAROON
+        ? process.env.NEXT_PUBLIC_ALICE_MACAROON
+        : "";
+
+    const [host, setHost] = useState(defaultHost);
+    const [cert, setCert] = useState(defaultCert);
+    const [macaroon, setMacaroon] = useState(defaultMacaroon);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
