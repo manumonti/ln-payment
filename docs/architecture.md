@@ -90,3 +90,45 @@ erDiagram
 
 ## Data Flow
 
+### Connection to LND node
+
+```mermaid
+sequenceDiagram
+    Client->>+Backend: [host,TLS cert,macaroon]
+    Backend->>+LND node: [host,TLS cert,macaroon]
+    LND node->>+Backend: [pubkey,alias]
+    Backend->>+Backend: generate token
+    Backend->>+DB: [token,host,TLS cert,macaroon,pubkey,created_at]
+    DB->>+DB: save connection
+    Backend->>+Client: [token]
+```
+
+### Invoice creation
+
+```mermaid
+sequenceDiagram
+    Client->>+Backend: [token,amount,memo]
+    Backend->>+LND node: [token,amount,memo]
+    LND node->>+Backend: [invoiceHash,paymentRequest,amount,memo]
+    Backend->>+LND node: lookupInvoice()
+    LND node->>+Backend: [creationDate,expiry]
+    Backend->>+DB: [invoiceHash,paymentRequest,amount,memo,creationDate,expiry]
+    DB->>+DB: save invoice
+    Backend->>Client: [invoiceHash,paymentRequest,amount,memo,creationDate,expiry]
+```
+
+### Payment execution
+
+```mermaid
+sequenceDiagram
+    Client->>+Backend: [token,paymentRequest]
+    Backend->>+LND node: decodePayReq(paymentRequest)
+    LND node->>+Backend: [destination,paymentHash,amount,memo,creationdate]
+    Backend->>+DB: [destination,paymentHash,amount,memo,creationdate]
+    DB->>+DB: save payment
+    Backend->>+LND node: sendPayment[paymentRequest]
+    LND node->>+Backend: payment finished
+    Backend->>+DB: [newPaymentStatus]
+    DB->>+DB: update payment status
+    Backend->>+Client: there is a new update
+```

@@ -82,7 +82,7 @@ The Lightning Network must be run as described above through Polar.
 1. Postgres database must be running. The easies way is to comment out the `backend` and `frontend` services in the [compose.yaml](../compose.yaml) file and run `docker-compose up --build`.
 2. pgAdmin dashboard is available at [http://localhost:5050](http://localhost:5050). Create a new server connection with the following credentials:
 
-- Name: <whatever you want>
+- Name: `<whatever you want>`
 - Host name/address: `postgres`. This will use Docker networking to connect to the database container.
 - Port: `5432`
 - Maintenance database: `postgres`
