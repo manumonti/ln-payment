@@ -13,7 +13,7 @@ The application is a full-stack solution designed to facilitate Lightning Networ
    - Manages LND node connection states.
    - Polls/Listens for payment updates (via Socket.io).
 
-2. **Backend (Express + TypeScript)**:
+2. **Backend (Express)**:
    - Acts as a bridge between the frontend and LND nodes.
    - Handles gRPC communication with LND using `@radar/lnrpc`.
    - Manages multiple node connections via a `NodeManager` class.
@@ -24,7 +24,44 @@ The application is a full-stack solution designed to facilitate Lightning Networ
    - Maintains a record of connected nodes for session management.
 
 4. **Lightning Nodes (Polar/LND)**:
-   - The actual Lightning Network nodes that handle the protocol logic, channel management, and cryptographic signing.
+   - The actual Lightning Network nodes that handle the protocol logic.
+
+```ascii
+ln-payment/
+├── backend/                  # Express server
+│   ├── src/
+│   │   ├── database.ts       # PostgreSQL connection & queries
+│   │   ├── index.ts          # Application entry point
+│   │   ├── node-manager.ts   # LND gRPC connection handler
+│   │   ├── routes.ts         # API route definitions
+│   │   └── server.ts         # Express server setup
+│   ├── tests/                # Backend tests
+│   ├── Dockerfile            # Backend container configuration
+│   └── package.json          # Backend dependencies
+│
+├── frontend/                 # Next.js server
+│   ├── src/
+│   │   ├── app/              # Next.js App Router pages
+│   │   │   ├── balance/      # Balance page
+│   │   │   ├── receiver/     # Receiver / Invoice generation page
+│   │   │   ├── sender/       # Sender / Payment execution page
+│   │   │   └── transactions/ # Transaction history page
+│   │   ├── components/       # React UI components
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── providers/        # Context providers
+│   │   ├── styles/           # Global styles
+│   │   └── utils/            # Helper functions
+│   ├── Dockerfile            # Frontend container configuration
+│   ├── .env.local            # Frontend environment variables
+│   └── package.json          # Frontend dependencies
+│
+├── docs/                     # Project documentation
+│
+├── compose.yaml              # Docker Compose configuration
+├── .env                      # Project environment variables
+├── package.json              # Project dependencies (code formatting)
+└── README.md                 # Project overview
+```
 
 ## Architecture Decisions
 

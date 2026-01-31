@@ -8,7 +8,7 @@ For detailed information, please refer to the following guides:
 
 - **[Setup & Run Guide](docs/setup.md)**: Detailed instructions on how to run the application.
 - **[API Documentation](docs/api.md)**: Details of all REST endpoints available in the backend.
-- **[Architecture Decisions](docs/architecture.md)**: In-depth look at the technology stack, system design, and database schema.
+- **[Architecture](docs/architecture.md)**: In-depth look at the technology stack, system design, and database schema.
 
 ## 🛠 Features
 
