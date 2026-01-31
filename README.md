@@ -32,3 +32,11 @@ For detailed information, please refer to the following guides:
 - **Lightning Network**: Simulated LND (Lightning Network Daemon) nodes via [Polar](https://lightningpolar.com/).
 - **Code Style**: [ESLint](https://eslint.org/) code linter, [Prettier](https://prettier.io/) code formatter, [Husky](https://typicode.github.io/husky/) for pre-commit Git hook.
 - **Testing**: [Jest](https://jestjs.io/) unit testing framework for backend.
+
+## TODOs
+
+- [ ] Add unit tests for frontend components
+- [ ] Add e2e tests for frontend components
+- [ ] Better error handling
+- [ ] Better consistency between API endpoints responses
+- [ ] Transactions and Balance pages are updated in real-time
