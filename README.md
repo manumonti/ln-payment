@@ -2,6 +2,8 @@
 
 A full-stack application for Bitcoin Lightning Network payments between nodes. This project demonstrates end-to-end invoice generation, payment execution, and real-time status tracking using LND nodes within a Polar-simulated network.
 
+![ln-payment-payment gif](https://github.com/user-attachments/assets/5c3663c7-f660-4d09-9cce-73a009cbe5c2)
+
 ## 📚 Documentation
 
 For detailed information, please refer to the following guides:
@@ -33,10 +35,28 @@ For detailed information, please refer to the following guides:
 - **Code Style**: [ESLint](https://eslint.org/) code linter, [Prettier](https://prettier.io/) code formatter, [Husky](https://typicode.github.io/husky/) for pre-commit Git hook.
 - **Testing**: [Jest](https://jestjs.io/) unit testing framework for backend.
 
-## TODOs
+## 📋 TODOs
 
 - [ ] Add unit tests for frontend components
 - [ ] Add e2e tests for frontend components
 - [ ] Better error handling
 - [ ] Better consistency between API endpoints responses
 - [ ] Transactions and Balance pages are updated in real-time
+
+## 📷 Screenshots
+
+### Payment page
+
+![ln-payment-payment gif](https://github.com/user-attachments/assets/5c3663c7-f660-4d09-9cce-73a009cbe5c2)
+
+### Invoice page
+
+![ln-payment-invoice gif](https://github.com/user-attachments/assets/ccabb62f-7e6b-413e-b024-f7d0e8e87f9f)
+
+### Transactions page
+
+<img width="1294" height="1074" alt="ln-payment-transactions" src="https://github.com/user-attachments/assets/4de1d55a-637b-4050-9d4c-7af3e9d7dab4" />
+
+### Balance page
+
+<img width="1250" height="1030" alt="ln-payment-balance" src="https://github.com/user-attachments/assets/c23a5374-b52b-4cb9-8d1e-55202f924f1f" />
